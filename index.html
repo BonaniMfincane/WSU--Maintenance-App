@@ -1,0 +1,556 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IWS Campus Maintenance Reporting & Tracking System</title>
+    <!-- Google Fonts: Outfit -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- Lucide Icons CDN -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <!-- Custom CSS Link -->
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+    <!-- TOAST NOTIFICATION CONTAINER -->
+    <div id="toast-container" class="toast-container"></div>
+
+    <!-- WELCOME ENTRANCE SCREEN -->
+    <section id="welcome-screen" class="app-screen active">
+        <div class="glass-card welcome-card">
+            <div class="logo-container">
+                <div class="iws-banner">
+                    <span class="wsu-text-gold">iYunivesithi</span> 
+                    <span class="wsu-text-white">Walter Sisulu</span>
+                </div>
+                <div class="logo-subtext">IN PURSUIT OF EXCELLENCE</div>
+            </div>
+            
+            <h1 class="welcome-title">Campus Maintenance System</h1>
+            <p class="welcome-subtitle">Report faults instantly, track repairs in real-time, and connect directly with our facilities maintenance team.</p>
+            
+            <div class="portal-options">
+                <button class="btn btn-primary portal-btn" onclick="navigateTo('student-login')">
+                    <i data-lucide="graduation-cap"></i>
+                    <span>Student Portal</span>
+                </button>
+                <button class="btn btn-secondary portal-btn" onclick="navigateTo('admin-login')">
+                    <i data-lucide="shield-check"></i>
+                    <span>Admin Portal</span>
+                </button>
+            </div>
+            <div class="card-footer">
+                <p>Need help? Contact <a href="mailto:facilities@wsu.ac.za">facilities@wsu.ac.za</a></p>
+            </div>
+        </div>
+    </section>
+
+    <!-- STUDENT LOGIN / REGISTRATION SCREEN -->
+    <section id="student-login-screen" class="app-screen">
+        <div class="glass-card auth-card">
+            <button class="back-btn" onclick="navigateTo('welcome')">
+                <i data-lucide="arrow-left"></i> Back
+            </button>
+            
+            <div class="tab-header">
+                <button id="tab-login" class="tab-btn active" onclick="switchAuthTab('login')">Sign In</button>
+                <button id="tab-register" class="tab-btn" onclick="switchAuthTab('register')">Register</button>
+            </div>
+
+            <!-- Login Form -->
+            <form id="student-login-form" class="auth-form active-form" onsubmit="handleStudentLogin(event)">
+                <h2 class="form-title">Student Login</h2>
+                <p class="form-subtitle">Access your personal maintenance tracking portal</p>
+                
+                <div class="form-group">
+                    <label for="login-student-id">Student Number</label>
+                    <div class="input-with-icon">
+                        <i data-lucide="user"></i>
+                        <input type="text" id="login-student-id" placeholder="e.g. 221775706" required>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="login-student-pass">Password</label>
+                    <div class="input-with-icon">
+                        <i data-lucide="lock"></i>
+                        <input type="password" id="login-student-pass" placeholder="••••••••" required>
+                    </div>
+                </div>
+
+                <div class="form-actions">
+                    <label class="remember-me">
+                        <input type="checkbox"> Remember me
+                    </label>
+                    <a href="#" class="forgot-pass">Forgot Password?</a>
+                </div>
+
+                <button type="submit" class="btn btn-primary btn-block">Sign In</button>
+            </form>
+
+            <!-- Register Form -->
+            <form id="student-register-form" class="auth-form" onsubmit="handleStudentRegister(event)">
+                <h2 class="form-title">Create Account</h2>
+                <p class="form-subtitle">Register to begin reporting maintenance issues</p>
+                
+                <div class="form-group">
+                    <label for="reg-name">Full Name</label>
+                    <div class="input-with-icon">
+                        <i data-lucide="user-plus"></i>
+                        <input type="text" id="reg-name" placeholder="e.g. Sipho Mfincane" required>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="reg-student-id">Student Number</label>
+                    <div class="input-with-icon">
+                        <i data-lucide="hash"></i>
+                        <input type="text" id="reg-student-id" placeholder="e.g. 222574178" required>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="reg-email">Email Address</label>
+                    <div class="input-with-icon">
+                        <i data-lucide="mail"></i>
+                        <input type="email" id="reg-email" placeholder="studentnumber@wsu.ac.za" required>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="reg-pass">Password</label>
+                    <div class="input-with-icon">
+                        <i data-lucide="lock"></i>
+                        <input type="password" id="reg-pass" placeholder="Minimum 6 characters" required minlength="6">
+                    </div>
+                </div>
+
+                <button type="submit" class="btn btn-primary btn-block">Create Account</button>
+            </form>
+        </div>
+    </section>
+
+    <!-- ADMIN LOGIN SCREEN -->
+    <section id="admin-login-screen" class="app-screen">
+        <div class="glass-card auth-card">
+            <button class="back-btn" onclick="navigateTo('welcome')">
+                <i data-lucide="arrow-left"></i> Back
+            </button>
+            
+            <form id="admin-login-form" class="auth-form active-form" onsubmit="handleAdminLogin(event)">
+                <div class="admin-badge">
+                    <i data-lucide="shield-check"></i>
+                </div>
+                <h2 class="form-title">Administrative Portal</h2>
+                <p class="form-subtitle">Enter staff credentials to manage campus requests</p>
+                
+                <div class="form-group">
+                    <label for="admin-id">Admin ID / Email</label>
+                    <div class="input-with-icon">
+                        <i data-lucide="user"></i>
+                        <input type="text" id="admin-id" placeholder="e.g. admin" required>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="admin-pass">Password</label>
+                    <div class="input-with-icon">
+                        <i data-lucide="lock"></i>
+                        <input type="password" id="admin-pass" placeholder="••••••••" required>
+                    </div>
+                </div>
+
+                <button type="submit" class="btn btn-secondary btn-block">Administrative Access</button>
+            </form>
+        </div>
+    </section>
+
+    <!-- STUDENT DASHBOARD SCREEN -->
+    <section id="student-dashboard-screen" class="app-screen">
+        <!-- HEADER -->
+        <header class="app-header">
+            <div class="header-brand">
+                <div class="iws-logo-small">WSU</div>
+                <div>
+                    <h3 class="system-title">IWS Campus Maintenance</h3>
+                    <span class="user-role-badge">Student Portal</span>
+                </div>
+            </div>
+            <div class="header-profile">
+                <div class="profile-info text-right">
+                    <h4 id="student-name-display" class="profile-name">Loading...</h4>
+                    <span id="student-id-display" class="profile-meta">Loading...</span>
+                </div>
+                <button class="logout-btn" onclick="logout()" title="Logout">
+                    <i data-lucide="log-out"></i>
+                </button>
+            </div>
+        </header>
+
+        <main class="dashboard-content">
+            <!-- STATISTICS -->
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-icon bg-burgundy"><i data-lucide="file-text"></i></div>
+                    <div class="stat-details">
+                        <h2 id="student-stat-total">0</h2>
+                        <p>My Requests</p>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon bg-gold"><i data-lucide="clock"></i></div>
+                    <div class="stat-details">
+                        <h2 id="student-stat-pending">0</h2>
+                        <p>Pending</p>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon bg-blue"><i data-lucide="wrench"></i></div>
+                    <div class="stat-details">
+                        <h2 id="student-stat-progress">0</h2>
+                        <p>In Progress</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- DASHBOARD CORE -->
+            <div class="dashboard-grid">
+                <!-- LEADING CONTROLS & NEW REQUEST -->
+                <div class="grid-left">
+                    <div class="glass-card new-request-card">
+                        <div class="card-header-flex">
+                            <h3><i data-lucide="plus-circle" class="wsu-burgundy"></i> New Maintenance Request</h3>
+                        </div>
+                        <form id="new-request-form" onsubmit="handleNewRequest(event)">
+                            <div class="form-row">
+                                <div class="form-group col-6">
+                                    <label for="req-campus">Campus Location</label>
+                                    <select id="req-campus" required>
+                                        <option value="" disabled selected>Select Campus</option>
+                                        <option value="Potsdam">Potsdam</option>
+                                        <option value="Mthatha">Mthatha</option>
+                                        <option value="Butterworth">Butterworth</option>
+                                        <option value="Chiselhurst">Chiselhurst</option>
+                                    </select>
+                                </div>
+                                <div class="form-group col-6">
+                                    <label for="req-category">Fault Category</label>
+                                    <select id="req-category" onchange="autoDeterminePriority()" required>
+                                        <option value="" disabled selected>Select Category</option>
+                                        <option value="Plumbing">Plumbing (Leaking, blocked)</option>
+                                        <option value="Electrical">Electrical (Lights, power)</option>
+                                        <option value="Carpentry">Carpentry (Doors, chairs)</option>
+                                        <option value="Structural">Structural (Windows, locks)</option>
+                                        <option value="Cleaning">Cleaning / Grounds</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="form-row">
+                                <div class="form-group col-6">
+                                    <label for="req-building">Building Name / Residence</label>
+                                    <input type="text" id="req-building" placeholder="e.g. New Residence" required>
+                                </div>
+                                <div class="form-group col-6">
+                                    <label for="req-room">Room Number</label>
+                                    <input type="text" id="req-room" placeholder="e.g. RDF5.5" required>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="req-title">Brief Title</label>
+                                <input type="text" id="req-title" placeholder="e.g. Leaking bathroom tap" required>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="req-desc">Detailed Description</label>
+                                <textarea id="req-desc" rows="3" placeholder="Provide as much detail as possible to help the technician know what tools to bring..." required></textarea>
+                            </div>
+
+                            <div class="form-row align-center">
+                                <div class="form-group col-6">
+                                    <label>Priority (Auto-urgency Check)</label>
+                                    <div class="priority-badge-container">
+                                        <span id="priority-preview" class="priority-tag low">Low Priority</span>
+                                        <span class="priority-note">Determined by issue category.</span>
+                                    </div>
+                                </div>
+                                <div class="form-group col-6">
+                                    <label for="req-image">Attach Photo (Optional)</label>
+                                    <div class="file-upload-wrapper">
+                                        <input type="file" id="req-image" accept="image/*" onchange="previewSelectedImage(event)">
+                                        <div class="file-upload-btn">
+                                            <i data-lucide="camera"></i> <span>Upload Photo</span>
+                                        </div>
+                                    </div>
+                                    <div id="image-upload-preview-container" class="image-upload-preview-container hide">
+                                        <img id="image-upload-preview" src="" alt="Preview">
+                                        <button type="button" class="remove-img-btn" onclick="clearSelectedImage()">&times;</button>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <button type="submit" class="btn btn-primary btn-block"><i data-lucide="send"></i> Submit Maintenance Report</button>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- REQUEST LIST & CHAT -->
+                <div class="grid-right">
+                    <div class="glass-card list-card">
+                        <div class="card-header-flex">
+                            <h3><i data-lucide="list-todo" class="wsu-gold"></i> My Maintenance Requests</h3>
+                            <div class="list-filters">
+                                <button class="filter-chip active" onclick="filterStudentRequests('all')">All</button>
+                                <button class="filter-chip" onclick="filterStudentRequests('Pending')">Pending</button>
+                                <button class="filter-chip" onclick="filterStudentRequests('In Progress')">In Progress</button>
+                            </div>
+                        </div>
+
+                        <div id="student-requests-list" class="requests-list-container">
+                            <!-- Dynamically Generated -->
+                            <div class="no-records">
+                                <i data-lucide="inbox"></i>
+                                <p>No maintenance reports submitted yet.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </section>
+
+    <!-- ADMIN DASHBOARD SCREEN -->
+    <section id="admin-dashboard-screen" class="app-screen">
+        <!-- HEADER -->
+        <header class="app-header">
+            <div class="header-brand">
+                <div class="iws-logo-small logo-admin">IWS</div>
+                <div>
+                    <h3 class="system-title">IWS Facilities & Maintenance</h3>
+                    <span class="user-role-badge badge-admin">Administrator Dashboard</span>
+                </div>
+            </div>
+            <div class="header-profile">
+                <div class="profile-info text-right">
+                    <h4 class="profile-name">Facilities Manager</h4>
+                    <span class="profile-meta">IWS Administration</span>
+                </div>
+                <button class="logout-btn" onclick="logout()" title="Logout">
+                    <i data-lucide="log-out"></i>
+                </button>
+            </div>
+        </header>
+
+        <main class="dashboard-content">
+            <!-- STATISTICS -->
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-icon bg-burgundy"><i data-lucide="layers"></i></div>
+                    <div class="stat-details">
+                        <h2 id="admin-stat-total">0</h2>
+                        <p>Total Requests</p>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon bg-gold"><i data-lucide="alert-circle"></i></div>
+                    <div class="stat-details">
+                        <h2 id="admin-stat-pending">0</h2>
+                        <p>Pending</p>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon bg-blue"><i data-lucide="activity"></i></div>
+                    <div class="stat-details">
+                        <h2 id="admin-stat-progress">0</h2>
+                        <p>In Progress</p>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon bg-green"><i data-lucide="check-circle2"></i></div>
+                    <div class="stat-details">
+                        <h2 id="admin-stat-completed">0</h2>
+                        <p>Completed</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SEARCH, FILTERS & ACTION ACTIONS -->
+            <div class="admin-control-bar">
+                <div class="search-box">
+                    <i data-lucide="search"></i>
+                    <input type="text" id="admin-search" placeholder="Search by student, room, description..." oninput="filterAdminRequests()">
+                </div>
+                <div class="filter-controls">
+                    <select id="admin-filter-campus" onchange="filterAdminRequests()">
+                        <option value="all">All Campuses</option>
+                        <option value="Potsdam">Potsdam</option>
+                        <option value="Mthatha">Mthatha</option>
+                        <option value="Butterworth">Butterworth</option>
+                        <option value="Chiselhurst">Chiselhurst</option>
+                    </select>
+
+                    <select id="admin-filter-category" onchange="filterAdminRequests()">
+                        <option value="all">All Categories</option>
+                        <option value="Plumbing">Plumbing</option>
+                        <option value="Electrical">Electrical</option>
+                        <option value="Carpentry">Carpentry</option>
+                        <option value="Structural">Structural</option>
+                        <option value="Cleaning">Cleaning</option>
+                    </select>
+
+                    <select id="admin-filter-status" onchange="filterAdminRequests()">
+                        <option value="all">All Statuses</option>
+                        <option value="Pending">Pending</option>
+                        <option value="In Progress">In Progress</option>
+                        <option value="Completed">Completed</option>
+                    </select>
+
+                    <button class="btn btn-outline" onclick="archiveCompletedReports()" title="Archive Completed Reports at End of Term">
+                        <i data-lucide="archive"></i> Term Clean-up
+                    </button>
+                </div>
+            </div>
+
+            <!-- DUAL VIEW: TABLE & DETAIL PANEL -->
+            <div class="admin-grid">
+                <!-- LEFT: LIST OF ALL REQUESTS -->
+                <div class="admin-table-container glass-card">
+                    <table class="admin-table">
+                        <thead>
+                            <tr>
+                                <th onclick="sortAdminRequests('id')">ID <i data-lucide="chevrons-up-down"></i></th>
+                                <th onclick="sortAdminRequests('date')">Date <i data-lucide="chevrons-up-down"></i></th>
+                                <th>Student</th>
+                                <th>Category</th>
+                                <th>Location</th>
+                                <th onclick="sortAdminRequests('priority')">Priority <i data-lucide="chevrons-up-down"></i></th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="admin-requests-table-body">
+                            <!-- Dynamic Rows -->
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- RIGHT: REQUEST DETAILS & WORK MANAGEMENT / CHAT -->
+                <div class="admin-detail-panel" id="admin-detail-panel">
+                    <div class="no-selection-message" id="admin-no-selection">
+                        <i data-lucide="file-search"></i>
+                        <h3>No Request Selected</h3>
+                        <p>Select a maintenance ticket from the table to view details, update task progress, and message the student.</p>
+                    </div>
+
+                    <div class="detail-card glass-card hide" id="admin-detail-card">
+                        <!-- TICKET DETAILS -->
+                        <div class="detail-header">
+                            <span class="detail-ticket-id" id="detail-id">#00000</span>
+                            <button class="close-detail-btn" onclick="deselectRequest()">&times;</button>
+                        </div>
+                        
+                        <h2 class="detail-title" id="detail-title">Title of the Fault</h2>
+                        
+                        <div class="detail-meta-grid">
+                            <div class="meta-item">
+                                <span class="meta-label">Campus</span>
+                                <span class="meta-value" id="detail-campus">Potsdam</span>
+                            </div>
+                            <div class="meta-item">
+                                <span class="meta-label">Building & Room</span>
+                                <span class="meta-value" id="detail-location">New Residence, RDF5.5</span>
+                            </div>
+                            <div class="meta-item">
+                                <span class="meta-label">Submitted By</span>
+                                <span class="meta-value" id="detail-student">Sipho (222574178)</span>
+                            </div>
+                            <div class="meta-item">
+                                <span class="meta-label">Priority Level</span>
+                                <span class="priority-tag" id="detail-priority">High</span>
+                            </div>
+                        </div>
+
+                        <div class="detail-section">
+                            <span class="meta-label">Problem Description</span>
+                            <div class="description-box" id="detail-desc">
+                                Detailed description goes here.
+                            </div>
+                        </div>
+
+                        <!-- Ticket Photo -->
+                        <div class="detail-section hide" id="detail-photo-container">
+                            <span class="meta-label">Attached Photo</span>
+                            <div class="detail-photo-wrapper">
+                                <img id="detail-photo" src="" alt="Attached Fault Photo">
+                            </div>
+                        </div>
+
+                        <!-- TICKET OPERATIONS -->
+                        <div class="detail-operations">
+                            <div class="form-row">
+                                <div class="form-group col-6">
+                                    <label for="detail-status-select">Update Ticket Status</label>
+                                    <select id="detail-status-select" onchange="updateSelectedRequestStatus(this.value)">
+                                        <option value="Pending">Pending</option>
+                                        <option value="In Progress">In Progress</option>
+                                        <option value="Completed">Completed</option>
+                                    </select>
+                                </div>
+                                <div class="form-group col-6">
+                                    <label for="detail-eta-select">Set Est. Completion Time</label>
+                                    <select id="detail-eta-select" onchange="updateSelectedRequestETA(this.value)">
+                                        <option value="">No ETA set</option>
+                                        <option value="Under 2 Hours">Under 2 Hours</option>
+                                        <option value="Same Day (Today)">Same Day (Today)</option>
+                                        <option value="1-2 Days">1-2 Days</option>
+                                        <option value="3-5 Days">3-5 Days</option>
+                                        <option value="Next Week">Next Week</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- CHAT BRIDGE HEADER -->
+                        <div class="chat-bridge-header">
+                            <i data-lucide="message-square-more"></i> 
+                            <span>Communication Bridge with Student</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </section>
+
+    <!-- LIVE CHAT SLIDE-IN MODAL (STUDENT & ADMIN) -->
+    <div id="chat-modal" class="chat-modal-overlay">
+        <div class="chat-modal-container glass-card">
+            <div class="chat-header">
+                <div class="chat-title-info">
+                    <span class="chat-ticket-id" id="chat-ticket-id">#00000</span>
+                    <h3 id="chat-ticket-title">Leaking Tap - Plumbing</h3>
+                    <span id="chat-ticket-location" class="chat-subtitle">New Res RDF5.5</span>
+                </div>
+                <button class="close-chat-btn" onclick="closeChat()">&times;</button>
+            </div>
+            
+            <div id="chat-messages" class="chat-messages-body">
+                <!-- Messages will load dynamically -->
+            </div>
+            
+            <form id="chat-input-form" class="chat-input-area" onsubmit="handleSendChatMessage(event)">
+                <input type="text" id="chat-input-text" placeholder="Type a message to Maintenance..." required autocomplete="off">
+                <button type="submit" class="chat-send-btn">
+                    <i data-lucide="send"></i>
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Custom Script Link -->
+    <script src="app.js"></script>
+</body>
+</html>
